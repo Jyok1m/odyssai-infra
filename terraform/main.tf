@@ -83,5 +83,5 @@ output "odyssai_core_public_ip" {
 }
 
 output "odyssai_core_ssh" {
-  value = "ssh -i ~/.ssh/odyssai-key admin@${aws_instance.odyssai_core.public_ip}"
+  value = "ssh -i ~/.ssh/odyssai-key.pem admin@${aws_instance.odyssai_core.public_ip}"
 }
