@@ -32,20 +32,20 @@ resource "aws_security_group" "odyssai_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # SSH - Restreint à votre IP
+  # SSH
   ingress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["88.162.212.198/32"] # Votre IP
+    cidr_blocks = ["88.162.212.198/32"] # IP Home
   }
 
-  # Traefik Dashboard - Restreint à votre IP
+  # Traefik Dashboard
   ingress {
     from_port   = 9090
     to_port     = 9090
     protocol    = "tcp"
-    cidr_blocks = ["88.162.212.198/32"] # Votre IP
+    cidr_blocks = ["88.162.212.198/32"] #  IP Home
   }
 
   # Outbound traffic
@@ -61,12 +61,12 @@ resource "aws_security_group" "odyssai_sg" {
   }
 }
 
-# Utilisation de la clé existante
+# Utilisation de la clé existante dans AWS en DATA
 data "aws_key_pair" "odyssai_key" {
   key_name = "odyssai-key"
 }
 
-resource "aws_instance" "odyssai-core" {
+resource "aws_instance" "odyssai_core" {
   ami                    = "ami-0639bd0dd196bc480" # Debian ARM64
   instance_type          = "t4g.micro"
   key_name              = data.aws_key_pair.odyssai_key.key_name
@@ -77,7 +77,11 @@ resource "aws_instance" "odyssai-core" {
   }
 }
 
-# Outputs pour récupérer les informations
-output "public_ip" {
-  value = aws_instance.odyssai-core.public_ip
+# Outputs pour récupérer les public IP
+output "odyssai_core_public_ip" {
+  value = aws_instance.odyssai_core.public_ip
+}
+
+output "odyssai_core_ssh" {
+  value = "ssh -i ~/.ssh/odyssai-key admin@${aws_instance.odyssai_core.public_ip}"
 }
